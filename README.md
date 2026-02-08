@@ -1,0 +1,95 @@
+# Gutenberg Catalog Browser
+
+A web application for browsing the [Project Gutenberg](https://www.gutenberg.org/) book catalog. Built with NestJS and React.
+
+## Features
+
+- Browse ~77,000 books from the Project Gutenberg catalog
+- Filter by language (120 languages available)
+- Full-text search across titles, authors, subjects, and bookshelves
+- Paginated results sorted by publication date
+- Direct links to books on gutenberg.org
+
+## Prerequisites
+
+- Node.js 18+
+- npm
+
+## Getting Started
+
+### 1. Fetch the catalog data
+
+```bash
+./fetch_finnish_books.sh
+```
+
+This downloads the full `pg_catalog.csv` from Project Gutenberg (updated weekly) and also extracts Finnish entries into `pg_catalog_fi.csv`.
+
+### 2. Install dependencies
+
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+### 3. Start the backend
+
+```bash
+cd backend
+npm run start:dev
+```
+
+The API server starts on http://localhost:3001. On startup it parses the full CSV catalog into memory.
+
+### 4. Start the frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open http://localhost:5173 in your browser.
+
+## API Endpoints
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/languages` | List all unique language codes |
+| `GET /api/books` | Paginated book listing |
+
+### Query parameters for `/api/books`
+
+| Parameter | Description | Default |
+|---|---|---|
+| `language` | Filter by language code (e.g. `fi`, `en`) | all |
+| `search` | Search titles, authors, subjects, bookshelves | none |
+| `page` | Page number | `1` |
+| `limit` | Results per page | `50` |
+
+## Project Structure
+
+```
+gutenberg-info/
+  fetch_finnish_books.sh   # Script to download catalog CSV
+  backend/                 # NestJS API server
+    src/
+      catalog/
+        book.interface.ts
+        catalog.service.ts
+        catalog.controller.ts
+        catalog.module.ts
+  frontend/                # React + Vite UI
+    src/
+      api.ts
+      App.tsx
+      components/
+        BookTable.tsx
+        LanguageFilter.tsx
+        Pagination.tsx
+        SearchBar.tsx
+```
+
+## Data Source
+
+The catalog CSV is published weekly by Project Gutenberg at:
+https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv
