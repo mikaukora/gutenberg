@@ -95,13 +95,13 @@ Build and run as a single container:
 
 ```bash
 docker build -t gutenberg-browser .
-docker run -p 3000:3000 gutenberg-browser
+docker run --rm -p 3000:3000 gutenberg-browser
 ```
 
-The container automatically downloads the catalog CSV on first startup. The data is stored at `/app/data/pg_catalog.csv` inside the container. To persist it across restarts, mount a volume:
+Use `--rm` so the container is removed when it stops; Ctrl+C will shut the app down and release the port. The container automatically downloads the catalog CSV on first startup. The data is stored at `/app/data/pg_catalog.csv` inside the container. To persist it across restarts, mount a volume:
 
 ```bash
-docker run -p 3000:3000 -v gutenberg-data:/app/data gutenberg-browser
+docker run --rm -p 3000:3000 -v gutenberg-data:/app/data gutenberg-browser
 ```
 
 In Coolify, point it at this repository and it will pick up the `Dockerfile` automatically. Optionally add a volume mount for `/app/data` to persist the catalog across redeployments.

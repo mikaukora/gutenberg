@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   app.use(
     helmet({
       contentSecurityPolicy: process.env.NODE_ENV === 'production',
