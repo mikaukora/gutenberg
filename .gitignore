@@ -1,4 +1,5 @@
 *.csv
+!backend/test/fixtures/*.csv
 node_modules/
 dist/
 .DS_Store
