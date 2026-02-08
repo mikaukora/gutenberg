@@ -1,6 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 import type { BooksResponse } from './book.interface';
+import { booksQuerySchema, type BooksQuery } from './catalog.schema';
+import { ZodValidationPipe } from '../common/zod-validation.pipe';
 
 @Controller('api')
 export class CatalogController {
@@ -13,24 +15,13 @@ export class CatalogController {
 
   @Get('books')
   getBooks(
-    @Query('language') language?: string,
-    @Query('search') search?: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
+    @Query(new ZodValidationPipe(booksQuerySchema)) query: BooksQuery,
   ): BooksResponse {
-    const pageNum = Math.max(
-      1,
-      parseInt(page ?? '1', 10) || 1,
-    );
-    const limitNum = Math.min(
-      100,
-      Math.max(1, parseInt(limit ?? '50', 10) || 50),
-    );
     return this.catalogService.getBooks(
-      language,
-      search,
-      pageNum,
-      limitNum,
+      query.language,
+      query.search,
+      query.page,
+      query.limit,
     );
   }
 }

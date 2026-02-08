@@ -97,6 +97,16 @@ describe('Catalog API (e2e)', () => {
           expect(res.body.totalPages).toBe(3);
         });
     });
+
+    it('returns 400 for invalid query params', () => {
+      return request(app.getHttpServer())
+        .get('/api/books?page=-1&limit=50')
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.message).toBe('Validation failed');
+          expect(res.body.errors).toBeDefined();
+        });
+    });
   });
 
   describe('POST /api/admin/refresh-catalog', () => {

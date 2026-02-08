@@ -39,42 +39,24 @@ describe('CatalogController', () => {
   });
 
   describe('getBooks', () => {
-    it('calls getBooks with no params and uses default page/limit', () => {
-      controller.getBooks();
+    it('calls getBooks with query (defaults)', () => {
+      controller.getBooks({ page: 1, limit: 50 });
       expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
     });
 
-    it('passes language, search, and parses page and limit', () => {
-      controller.getBooks('fi', 'kalevala', '2', '10');
+    it('passes language, search, page and limit from query', () => {
+      controller.getBooks({
+        language: 'fi',
+        search: 'kalevala',
+        page: 2,
+        limit: 10,
+      });
       expect(getBooks).toHaveBeenCalledWith('fi', 'kalevala', 2, 10);
     });
 
-    it('uses page 1 and limit 50 when query params are missing', () => {
-      controller.getBooks(undefined, undefined, undefined, undefined);
-      expect(getBooks).toHaveBeenCalledWith(
-        undefined,
-        undefined,
-        1,
-        50,
-      );
-    });
-
-    it('clamps limit to 100 when given over 100', () => {
-      controller.getBooks(undefined, undefined, '1', '999');
-      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 100);
-    });
-
-    it('clamps page to 1 when given 0 or negative', () => {
-      controller.getBooks(undefined, undefined, '0', '50');
-      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
-      getBooks.mockClear();
-      controller.getBooks(undefined, undefined, '-1', '50');
-      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
-    });
-
-    it('treats invalid page/limit as default', () => {
-      controller.getBooks(undefined, undefined, 'abc', 'xyz');
-      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
+    it('uses page 1 and limit 50 when only optional fields set', () => {
+      controller.getBooks({ language: 'en', page: 1, limit: 50 });
+      expect(getBooks).toHaveBeenCalledWith('en', undefined, 1, 50);
     });
   });
 });
