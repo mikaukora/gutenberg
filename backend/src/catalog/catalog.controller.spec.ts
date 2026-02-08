@@ -58,5 +58,23 @@ describe('CatalogController', () => {
         50,
       );
     });
+
+    it('clamps limit to 100 when given over 100', () => {
+      controller.getBooks(undefined, undefined, '1', '999');
+      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 100);
+    });
+
+    it('clamps page to 1 when given 0 or negative', () => {
+      controller.getBooks(undefined, undefined, '0', '50');
+      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
+      getBooks.mockClear();
+      controller.getBooks(undefined, undefined, '-1', '50');
+      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
+    });
+
+    it('treats invalid page/limit as default', () => {
+      controller.getBooks(undefined, undefined, 'abc', 'xyz');
+      expect(getBooks).toHaveBeenCalledWith(undefined, undefined, 1, 50);
+    });
   });
 });

@@ -111,6 +111,17 @@ describe('CatalogService', () => {
       expect(res.limit).toBe(50);
       expect(res.page).toBe(1);
     });
+
+    it('clamps limit to 100 when service called with over 100', () => {
+      const res = service.getBooks(undefined, undefined, 1, 200);
+      expect(res.limit).toBe(100);
+      expect(res.data.length).toBe(5);
+    });
+
+    it('clamps page to 1 when given 0', () => {
+      const res = service.getBooks(undefined, undefined, 0, 50);
+      expect(res.page).toBe(1);
+    });
   });
 
   describe('reloadCatalog', () => {

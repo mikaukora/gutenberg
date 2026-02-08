@@ -123,11 +123,13 @@ export class CatalogService implements OnModuleInit {
       );
     }
 
+    const safeLimit = Math.min(100, Math.max(1, limit));
+    const safePage = Math.max(1, page);
     const total = filtered.length;
-    const totalPages = Math.ceil(total / limit);
-    const start = (page - 1) * limit;
-    const data = filtered.slice(start, start + limit);
+    const totalPages = Math.ceil(total / safeLimit);
+    const start = (safePage - 1) * safeLimit;
+    const data = filtered.slice(start, start + safeLimit);
 
-    return { data, total, page, limit, totalPages };
+    return { data, total, page: safePage, limit: safeLimit, totalPages };
   }
 }

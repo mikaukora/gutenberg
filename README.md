@@ -122,6 +122,16 @@ curl -X POST https://your-app/api/admin/refresh-catalog \
 
 Returns `200 { "ok": true }` on success. Without the correct header, returns 401.
 
+## Production
+
+For production deployments:
+
+- **NODE_ENV** — Set to `production` so CORS and security headers use production settings.
+- **CORS_ORIGIN** — Comma-separated list of allowed frontend origins (e.g. `https://catalog.example.com`). Required in production; no default (no `*`).
+- **REFRESH_SECRET** — Use a strong secret (e.g. 32+ random bytes). Do not commit it; set it in the environment or a secrets manager. The admin endpoint uses constant-time comparison and is rate-limited (5 requests per minute per IP).
+- **THROTTLE_TTL** / **THROTTLE_LIMIT** — Optional. Global rate limit: `THROTTLE_LIMIT` requests per `THROTTLE_TTL` ms (default: 100 per 60000 ms). Tune if needed.
+- **Security** — The backend sets Helmet security headers, validates and clamps `page` (≥1) and `limit` (1–100) for `/api/books`, and rate-limits all routes. Run behind a reverse proxy (nginx, Caddy, etc.) for TLS and optional additional rate limiting.
+
 ## Data Source
 
 The catalog CSV is published weekly by Project Gutenberg at:

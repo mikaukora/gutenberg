@@ -18,11 +18,19 @@ export class CatalogController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ): BooksResponse {
+    const pageNum = Math.max(
+      1,
+      parseInt(page ?? '1', 10) || 1,
+    );
+    const limitNum = Math.min(
+      100,
+      Math.max(1, parseInt(limit ?? '50', 10) || 50),
+    );
     return this.catalogService.getBooks(
       language,
       search,
-      page ? parseInt(page, 10) : 1,
-      limit ? parseInt(limit, 10) : 50,
+      pageNum,
+      limitNum,
     );
   }
 }
