@@ -1,0 +1,9 @@
+*.csv
+node_modules
+dist
+.git
+.DS_Store
+backend/node_modules
+backend/dist
+frontend/node_modules
+frontend/dist

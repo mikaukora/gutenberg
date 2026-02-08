@@ -15,7 +15,9 @@ export class CatalogService implements OnModuleInit {
   }
 
   private loadCatalog() {
-    const csvPath = path.resolve(__dirname, '..', '..', '..', 'pg_catalog.csv');
+    const csvPath =
+      process.env.CATALOG_CSV_PATH ||
+      path.resolve(__dirname, '..', '..', '..', 'pg_catalog.csv');
     this.logger.log(`Loading catalog from ${csvPath}`);
 
     const fileContent = fs.readFileSync(csvPath, 'utf-8');
