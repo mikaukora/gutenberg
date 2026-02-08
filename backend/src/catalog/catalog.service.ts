@@ -4,20 +4,37 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Book, BooksResponse } from './book.interface';
 
+const CATALOG_URL =
+  'https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv';
+
 @Injectable()
 export class CatalogService implements OnModuleInit {
   private readonly logger = new Logger(CatalogService.name);
   private books: Book[] = [];
   private languages: string[] = [];
 
+  getCatalogPath(): string {
+    return (
+      process.env.CATALOG_CSV_PATH ||
+      path.resolve(__dirname, '..', '..', '..', 'pg_catalog.csv')
+    );
+  }
+
   onModuleInit() {
     this.loadCatalog();
   }
 
+  reloadCatalog(): void {
+    try {
+      this.loadCatalog();
+    } catch (err) {
+      this.logger.error('Failed to reload catalog', err);
+      // Keep serving existing in-memory data
+    }
+  }
+
   private loadCatalog() {
-    const csvPath =
-      process.env.CATALOG_CSV_PATH ||
-      path.resolve(__dirname, '..', '..', '..', 'pg_catalog.csv');
+    const csvPath = this.getCatalogPath();
     this.logger.log(`Loading catalog from ${csvPath}`);
 
     const fileContent = fs.readFileSync(csvPath, 'utf-8');
@@ -39,12 +56,10 @@ export class CatalogService implements OnModuleInit {
       bookshelves: record['Bookshelves'] ?? '',
     }));
 
-    // Sort by issued date descending by default
     this.books.sort(
       (a, b) => new Date(b.issued).getTime() - new Date(a.issued).getTime(),
     );
 
-    // Derive unique languages
     const langSet = new Set<string>();
     for (const book of this.books) {
       if (book.language) {
@@ -56,6 +71,26 @@ export class CatalogService implements OnModuleInit {
     this.logger.log(
       `Loaded ${this.books.length} books with ${this.languages.length} unique language values`,
     );
+  }
+
+  async downloadCatalog(): Promise<void> {
+    const csvPath = this.getCatalogPath();
+    const dir = path.dirname(csvPath);
+    const tmpPath = path.join(dir, 'pg_catalog.csv.tmp');
+
+    this.logger.log('Downloading catalog from Project Gutenberg...');
+
+    const res = await fetch(CATALOG_URL);
+    if (!res.ok) {
+      throw new Error(`Download failed: ${res.status} ${res.statusText}`);
+    }
+
+    const buffer = await res.arrayBuffer();
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(tmpPath, Buffer.from(buffer), 'utf-8');
+    fs.renameSync(tmpPath, csvPath);
+
+    this.logger.log('Catalog download complete.');
   }
 
   getLanguages(): string[] {

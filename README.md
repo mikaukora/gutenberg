@@ -106,6 +106,22 @@ docker run -p 3000:3000 -v gutenberg-data:/app/data gutenberg-browser
 
 In Coolify, point it at this repository and it will pick up the `Dockerfile` automatically. Optionally add a volume mount for `/app/data` to persist the catalog across redeployments.
 
+## Daily refresh
+
+The catalog can be refreshed automatically on a schedule so new books from Project Gutenberg are picked up without redeploying.
+
+- **CATALOG_REFRESH_CRON** — Cron expression for when to download the new CSV and reload (default: `0 2 * * *`, i.e. 02:00 UTC daily). Set to empty to disable the scheduled refresh.
+- **REFRESH_SECRET** — If set, enables the external trigger endpoint and requires this value in the `X-Refresh-Secret` header. If not set, the admin endpoint is disabled.
+
+**External trigger (optional):** When `REFRESH_SECRET` is set, you can trigger a refresh on demand:
+
+```bash
+curl -X POST https://your-app/api/admin/refresh-catalog \
+  -H "X-Refresh-Secret: your-secret"
+```
+
+Returns `200 { "ok": true }` on success. Without the correct header, returns 401.
+
 ## Data Source
 
 The catalog CSV is published weekly by Project Gutenberg at:
