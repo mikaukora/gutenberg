@@ -11,6 +11,10 @@ export function Pagination({ page, totalPages, total, onPageChange }: Props) {
   const pages: (number | string)[] = [];
   const maxVisible = 7;
 
+  const pageSize = 50;
+  const from = (page - 1) * pageSize + 1;
+  const to = Math.min(page * pageSize, total);
+
   if (totalPages <= maxVisible) {
     for (let i = 1; i <= totalPages; i++) pages.push(i);
   } else {
@@ -30,7 +34,8 @@ export function Pagination({ page, totalPages, total, onPageChange }: Props) {
   return (
     <div className="pagination">
       <span className="pagination-info">
-        {total.toLocaleString()} results
+        Showing {from.toLocaleString()}–{to.toLocaleString()} of{' '}
+        {total.toLocaleString()}
       </span>
       <div className="pagination-controls">
         <button disabled={page <= 1} onClick={() => onPageChange(page - 1)}>

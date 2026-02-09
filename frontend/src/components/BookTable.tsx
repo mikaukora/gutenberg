@@ -36,51 +36,64 @@ function AuthorCell({
 }
 
 export function BookTable({ books, loading, onSearchByAuthor }: Props) {
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (books.length === 0) {
-    return <div className="no-results">No books found.</div>;
-  }
-
   return (
     <div className="table-wrapper">
       <table className="book-table">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Authors</th>
-            <th>Issued</th>
-            <th>Language</th>
-            <th>Subjects</th>
+            <th scope="col">Title</th>
+            <th scope="col">Authors</th>
+            <th scope="col">Issued</th>
+            <th scope="col">Language</th>
+            <th scope="col">Subjects</th>
           </tr>
         </thead>
         <tbody>
-          {books.map((book) => (
-            <tr key={book.textId}>
-              <td>
-                <a
-                  href={`https://www.gutenberg.org/ebooks/${book.textId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {book.title}
-                </a>
-              </td>
-              <td className="authors-cell">
-                <AuthorCell
-                  authors={book.authors}
-                  onSearchByAuthor={onSearchByAuthor}
-                />
-              </td>
-              <td className="date-cell">{book.issued}</td>
-              <td className="lang-cell">
-                {formatLanguageDisplay(book.language)}
-              </td>
-              <td className="subjects-cell">{book.subjects}</td>
-            </tr>
-          ))}
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <tr key={`skeleton-${i}`} className="skeleton-row">
+                  <td colSpan={5}>
+                    <div className="skeleton-line skeleton-line-wide" />
+                  </td>
+                </tr>
+              ))
+            : books.length === 0
+              ? (
+                <tr>
+                  <td colSpan={5}>
+                    <div className="no-results">
+                      <p>No books found.</p>
+                      <p className="no-results-hint">
+                        Try a broader search term or clear filters.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                )
+              : books.map((book) => (
+                  <tr key={book.textId}>
+                    <td>
+                      <a
+                        href={`https://www.gutenberg.org/ebooks/${book.textId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {book.title}
+                      </a>
+                    </td>
+                    <td className="authors-cell">
+                      <AuthorCell
+                        authors={book.authors}
+                        onSearchByAuthor={onSearchByAuthor}
+                      />
+                    </td>
+                    <td className="date-cell">{book.issued}</td>
+                    <td className="lang-cell">
+                      {formatLanguageDisplay(book.language)}
+                    </td>
+                    <td className="subjects-cell">{book.subjects}</td>
+                  </tr>
+                ))}
         </tbody>
       </table>
     </div>

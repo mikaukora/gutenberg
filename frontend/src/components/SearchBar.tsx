@@ -23,6 +23,20 @@ export function SearchBar({ value, onSearch }: Props) {
 
   return (
     <div className="search-bar-wrap">
+      <span className="search-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="1.6" fill="none" />
+          <line
+            x1="15.5"
+            y1="15.5"
+            x2="20"
+            y2="20"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        </svg>
+      </span>
       <input
         className="search-bar"
         type="text"

@@ -31,6 +31,7 @@ export async function fetchBooks(params: {
   search?: string;
   page?: number;
   limit?: number;
+  signal?: AbortSignal;
 }): Promise<BooksResponse> {
   const query = new URLSearchParams();
   if (params.language) query.set('language', params.language);
@@ -38,7 +39,9 @@ export async function fetchBooks(params: {
   if (params.page) query.set('page', String(params.page));
   if (params.limit) query.set('limit', String(params.limit));
 
-  const res = await fetch(`${API_BASE}/books?${query.toString()}`);
+  const res = await fetch(`${API_BASE}/books?${query.toString()}`, {
+    signal: params.signal,
+  });
   if (!res.ok) throw new Error('Failed to fetch books');
   return res.json();
 }

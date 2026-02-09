@@ -19,15 +19,29 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    fetchBooks({ language, search, page, limit: PAGE_SIZE })
+    let cancelled = false;
+    const controller = new AbortController();
+
+    fetchBooks({ language, search, page, limit: PAGE_SIZE, signal: controller.signal })
       .then((res) => {
+        if (cancelled) return;
+        setLoading(true);
         setBooks(res.data);
         setTotal(res.total);
         setTotalPages(res.totalPages);
       })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .catch((error) => {
+        if (cancelled || error.name === 'AbortError') return;
+        console.error(error);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [language, search, page]);
 
   const handleLanguageChange = useCallback((lang: string) => {
