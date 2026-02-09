@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetchBooks, type Book } from './api';
+import { languageToLabel } from './utils/language';
 import { BookTable } from './components/BookTable';
 import { LanguageFilter } from './components/LanguageFilter';
 import { Pagination } from './components/Pagination';
@@ -9,7 +10,7 @@ import './App.css';
 const PAGE_SIZE = 50;
 
 function App() {
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState('fi');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [books, setBooks] = useState<Book[]>([]);
@@ -39,21 +40,36 @@ function App() {
     setPage(1);
   }, []);
 
+  const handleSearchByAuthor = useCallback((author: string) => {
+    setSearch(author);
+    setPage(1);
+  }, []);
+
+  const languageLabel = language ? languageToLabel(language) : null;
+  const subtitle =
+    search && language
+      ? `"${search}" in ${languageLabel ?? language} — ${total.toLocaleString()} books`
+      : language
+        ? `Recent ${languageLabel ?? language} books — ${total.toLocaleString()} in catalog`
+        : `${total.toLocaleString()} books from Project Gutenberg`;
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>Project Gutenberg Catalog</h1>
-        <p className="subtitle">
-          Browse {total.toLocaleString()} books from Project Gutenberg
-        </p>
+        <p className="subtitle">{subtitle}</p>
       </header>
 
       <div className="controls">
         <LanguageFilter value={language} onChange={handleLanguageChange} />
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar value={search} onSearch={handleSearch} />
       </div>
 
-      <BookTable books={books} loading={loading} />
+      <BookTable
+        books={books}
+        loading={loading}
+        onSearchByAuthor={handleSearchByAuthor}
+      />
 
       <Pagination
         page={page}

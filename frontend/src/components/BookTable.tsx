@@ -1,11 +1,41 @@
 import type { Book } from '../api';
+import { formatLanguageDisplay } from '../utils/language';
 
 interface Props {
   books: Book[];
   loading: boolean;
+  onSearchByAuthor?: (author: string) => void;
 }
 
-export function BookTable({ books, loading }: Props) {
+function AuthorCell({
+  authors,
+  onSearchByAuthor,
+}: {
+  authors: string;
+  onSearchByAuthor?: (author: string) => void;
+}) {
+  if (!onSearchByAuthor || !authors) return <>{authors}</>;
+  const names = authors.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+  return (
+    <>
+      {names.map((name, i) => (
+        <span key={i}>
+          {i > 0 && ', '}
+          <button
+            type="button"
+            className="author-link"
+            onClick={() => onSearchByAuthor(name)}
+            title={`Show all titles by ${name}`}
+          >
+            {name}
+          </button>
+        </span>
+      ))}
+    </>
+  );
+}
+
+export function BookTable({ books, loading, onSearchByAuthor }: Props) {
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
@@ -38,9 +68,16 @@ export function BookTable({ books, loading }: Props) {
                   {book.title}
                 </a>
               </td>
-              <td>{book.authors}</td>
+              <td className="authors-cell">
+                <AuthorCell
+                  authors={book.authors}
+                  onSearchByAuthor={onSearchByAuthor}
+                />
+              </td>
               <td className="date-cell">{book.issued}</td>
-              <td className="lang-cell">{book.language}</td>
+              <td className="lang-cell">
+                {formatLanguageDisplay(book.language)}
+              </td>
               <td className="subjects-cell">{book.subjects}</td>
             </tr>
           ))}
