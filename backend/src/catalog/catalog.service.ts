@@ -113,14 +113,39 @@ export class CatalogService implements OnModuleInit {
     }
 
     if (search) {
-      const term = search.toLowerCase();
-      filtered = filtered.filter(
-        (book) =>
-          book.title.toLowerCase().includes(term) ||
-          book.authors.toLowerCase().includes(term) ||
-          book.subjects.toLowerCase().includes(term) ||
-          book.bookshelves.toLowerCase().includes(term),
-      );
+      const term = search.trim().toLowerCase().replace(/\s+/g, ' ');
+
+      const isLikelyPersonName =
+        term.length > 0 &&
+        term.length <= 60 &&
+        term.split(' ').length === 2 &&
+        !term.includes('@') &&
+        !/[0-9]/.test(term);
+
+      let authorTerms: string[] = [];
+      if (isLikelyPersonName) {
+        const [first, last] = term.split(' ');
+        const fullName = `${first} ${last}`.trim();
+        const inverted = `${last}, ${first}`.trim();
+        authorTerms = Array.from(new Set([fullName, inverted]));
+      }
+
+      filtered = filtered.filter((book) => {
+        const title = book.title.toLowerCase();
+        const authors = book.authors.toLowerCase();
+        const subjects = book.subjects.toLowerCase();
+        const shelves = book.bookshelves.toLowerCase();
+
+        if (title.includes(term) || subjects.includes(term) || shelves.includes(term)) {
+          return true;
+        }
+
+        if (authorTerms.length > 0) {
+          return authorTerms.some((t) => authors.includes(t));
+        }
+
+        return authors.includes(term);
+      });
     }
 
     const safeLimit = Math.min(100, Math.max(1, limit));

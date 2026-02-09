@@ -15,7 +15,12 @@ function AuthorCell({
   onSearchByAuthor?: (author: string) => void;
 }) {
   if (!onSearchByAuthor || !authors) return <>{authors}</>;
-  const names = authors.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+  // Authors are typically separated by ';'. Keep commas within a single
+  // author entry so values like "Tolstoy, Leo, graf." remain one clickable name.
+  const names = authors
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean);
   return (
     <>
       {names.map((name, i) => (

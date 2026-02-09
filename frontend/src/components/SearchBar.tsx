@@ -42,10 +42,10 @@ export function SearchBar({ value, onSearch }: Props) {
         ref={inputRef}
         className="search-bar"
         type="text"
-        placeholder="Search by title or author"
+        placeholder="Search by title or author name"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        aria-label="Search by title or author"
+        aria-label="Search by title or author name"
       />
       {input && (
         <button
