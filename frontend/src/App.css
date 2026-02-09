@@ -77,17 +77,10 @@ body {
 /* ── Controls ──────────────────────────────────────── */
 .controls {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
   gap: 1.25rem;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 640px) {
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
 }
 
 .language-filter {
@@ -199,7 +192,6 @@ body {
   width: 100%;
   height: 100%;
 }
-}
 
 /* ── Table ─────────────────────────────────────────── */
 .table-wrapper {
@@ -284,14 +276,13 @@ body {
 }
 
 .subjects-cell {
-  max-width: 300px;
+  max-width: 320px;
   color: var(--color-text-muted);
   font-size: 0.8rem;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  vertical-align: middle;
 }
 
 /* ── Loading / Empty ───────────────────────────────── */
