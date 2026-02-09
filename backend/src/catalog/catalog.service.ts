@@ -54,6 +54,8 @@ export class CatalogService implements OnModuleInit {
       subjects: record['Subjects'] ?? '',
       locc: record['LoCC'] ?? '',
       bookshelves: record['Bookshelves'] ?? '',
+      // Bookshelves column contains the textual category labels
+      categories: record['Bookshelves'] ?? '',
     }));
 
     this.books.sort(
@@ -135,8 +137,14 @@ export class CatalogService implements OnModuleInit {
         const authors = book.authors.toLowerCase();
         const subjects = book.subjects.toLowerCase();
         const shelves = book.bookshelves.toLowerCase();
+        const categories = (book.categories ?? '').toLowerCase();
 
-        if (title.includes(term) || subjects.includes(term) || shelves.includes(term)) {
+        if (
+          title.includes(term) ||
+          subjects.includes(term) ||
+          shelves.includes(term) ||
+          categories.includes(term)
+        ) {
           return true;
         }
 

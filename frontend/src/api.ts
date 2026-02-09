@@ -10,6 +10,7 @@ export interface Book {
   subjects: string;
   locc: string;
   bookshelves: string;
+  categories: string;
 }
 
 export interface BooksResponse {

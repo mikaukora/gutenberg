@@ -59,6 +59,11 @@ function App() {
     setPage(1);
   }, []);
 
+  const handleSearchByCategory = useCallback((category: string) => {
+    setSearch(category);
+    setPage(1);
+  }, []);
+
   const languageLabel = language ? languageToLabel(language) : null;
   const subtitle =
     search && language
@@ -83,6 +88,7 @@ function App() {
         books={books}
         loading={loading}
         onSearchByAuthor={handleSearchByAuthor}
+        onSearchByCategory={handleSearchByCategory}
       />
 
       <Pagination

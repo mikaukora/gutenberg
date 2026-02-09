@@ -305,6 +305,27 @@ body {
   text-align: center;
 }
 
+.category-cell {
+  white-space: normal;
+  max-width: 220px;
+  color: var(--color-text-muted);
+}
+
+.category-link {
+  font: inherit;
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 2px;
+}
+
+.category-link:hover {
+  text-decoration: underline;
+}
+
 .subjects-cell {
   max-width: 320px;
   color: var(--color-text-muted);

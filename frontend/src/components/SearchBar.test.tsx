@@ -7,7 +7,7 @@ describe('SearchBar', () => {
     render(<SearchBar value="Tolstoy" onSearch={onSearch} />);
 
     const input = screen.getByRole('textbox', {
-      name: /search by title or author name/i,
+      name: /search by title, author, subject, or category/i,
     });
 
     // ensure input has initial value

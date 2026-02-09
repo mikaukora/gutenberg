@@ -5,6 +5,7 @@ interface Props {
   books: Book[];
   loading: boolean;
   onSearchByAuthor?: (author: string) => void;
+  onSearchByCategory?: (category: string) => void;
 }
 
 function AuthorCell({
@@ -40,7 +41,60 @@ function AuthorCell({
   );
 }
 
-export function BookTable({ books, loading, onSearchByAuthor }: Props) {
+function normalizeCategories(raw: string): string[] {
+  if (!raw) return [];
+  const result: string[] = [];
+  const blocks = raw.split(';');
+  for (const block of blocks) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+    const withoutPrefix = trimmed.replace(/^Category:\s*/i, '').trim();
+    if (!withoutPrefix) continue;
+    const parts = withoutPrefix.split(',').map((p) => p.trim()).filter(Boolean);
+    result.push(...parts);
+  }
+  return Array.from(new Set(result));
+}
+
+function CategoryCell({
+  categories,
+  onSearchByCategory,
+}: {
+  categories: string;
+  onSearchByCategory?: (category: string) => void;
+}) {
+  const items = normalizeCategories(categories);
+  if (!items.length) return null;
+
+  if (!onSearchByCategory) {
+    return <>{items.join(', ')}</>;
+  }
+
+  return (
+    <>
+      {items.map((name, i) => (
+        <span key={name}>
+          {i > 0 && ', '}
+          <button
+            type="button"
+            className="category-link"
+            onClick={() => onSearchByCategory(name)}
+            title={`Show all titles with category ${name}`}
+          >
+            {name}
+          </button>
+        </span>
+      ))}
+    </>
+  );
+}
+
+export function BookTable({
+  books,
+  loading,
+  onSearchByAuthor,
+  onSearchByCategory,
+}: Props) {
   return (
     <div className="table-wrapper">
       <table className="book-table">
@@ -50,6 +104,7 @@ export function BookTable({ books, loading, onSearchByAuthor }: Props) {
             <th scope="col">Authors</th>
             <th scope="col">Issued</th>
             <th scope="col">Language</th>
+            <th scope="col">Category</th>
             <th scope="col">Subjects</th>
           </tr>
         </thead>
@@ -57,7 +112,7 @@ export function BookTable({ books, loading, onSearchByAuthor }: Props) {
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
                 <tr key={`skeleton-${i}`} className="skeleton-row">
-                  <td colSpan={5}>
+                  <td colSpan={6}>
                     <div className="skeleton-line skeleton-line-wide" />
                   </td>
                 </tr>
@@ -65,7 +120,7 @@ export function BookTable({ books, loading, onSearchByAuthor }: Props) {
             : books.length === 0
               ? (
                 <tr>
-                  <td colSpan={5}>
+                  <td colSpan={6}>
                     <div className="no-results">
                       <p>No books found.</p>
                       <p className="no-results-hint">
@@ -96,7 +151,15 @@ export function BookTable({ books, loading, onSearchByAuthor }: Props) {
                     <td className="lang-cell">
                       {formatLanguageDisplay(book.language)}
                     </td>
-                    <td className="subjects-cell">{book.subjects}</td>
+                    <td className="category-cell" title={book.categories}>
+                      <CategoryCell
+                        categories={book.categories}
+                        onSearchByCategory={onSearchByCategory}
+                      />
+                    </td>
+                    <td className="subjects-cell" title={book.subjects}>
+                      {book.subjects}
+                    </td>
                   </tr>
                 ))}
         </tbody>
