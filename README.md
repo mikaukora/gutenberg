@@ -33,27 +33,20 @@ This downloads the full `pg_catalog.csv` from Project Gutenberg (updated weekly)
 ### 2. Install dependencies
 
 ```bash
+npm install
 cd backend && npm install
 cd ../frontend && npm install
 ```
 
-### 3. Start the backend
+### 3. Run the app
+
+From the repository root:
 
 ```bash
-cd backend
-npm run start:dev
-```
-
-The API server starts on http://localhost:3001. On startup it parses the full CSV catalog into memory.
-
-### 4. Start the frontend
-
-```bash
-cd frontend
 npm run dev
 ```
 
-Open http://localhost:5173 in your browser.
+This starts the backend (port 3001) and the frontend dev server (port 3000) together. Open **http://localhost:3000** in your browser. The frontend proxies `/api` to the backend, so you get hot reload for both.
 
 ## API Endpoints
 
