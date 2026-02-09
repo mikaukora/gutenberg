@@ -16,7 +16,7 @@ async function bootstrap() {
       origin: origin ? origin.split(',').map((o) => o.trim()) : false,
     });
   } else {
-    app.enableCors({ origin: 'http://localhost:5173' });
+    app.enableCors({ origin: 'http://localhost:3000' });
   }
   await app.listen(process.env.PORT ?? 3001);
 }
