@@ -15,6 +15,7 @@ describe('CatalogController', () => {
       page: 1,
       limit: 50,
       totalPages: 0,
+      refreshedAt: new Date().toISOString(),
     });
 
     const module: TestingModule = await Test.createTestingModule({

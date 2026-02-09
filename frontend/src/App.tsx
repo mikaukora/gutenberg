@@ -17,6 +17,7 @@ function App() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,6 +30,7 @@ function App() {
         setBooks(res.data);
         setTotal(res.total);
         setTotalPages(res.totalPages);
+        setRefreshedAt(res.refreshedAt);
       })
       .catch((error) => {
         if (cancelled || error.name === 'AbortError') return;
@@ -76,7 +78,24 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Project Gutenberg Catalog</h1>
-        <p className="subtitle">{subtitle}</p>
+        <p className="subtitle">
+          {subtitle}
+          {refreshedAt && (
+            <>
+              {' · '}
+              <span>
+                Data updated{' '}
+                {new Date(refreshedAt).toLocaleString(undefined, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </>
+          )}
+        </p>
       </header>
 
       <div className="controls">

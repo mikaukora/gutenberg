@@ -63,6 +63,7 @@ describe('CatalogService', () => {
       expect(res.page).toBe(1);
       expect(res.limit).toBe(50);
       expect(res.totalPages).toBe(1);
+      expect(typeof res.refreshedAt).toBe('string');
       expect(res.data[0].issued).toBe('2020-01-15');
       expect(res.data[1].issued).toBe('2005-07-01');
     });

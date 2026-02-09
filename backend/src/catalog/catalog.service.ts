@@ -12,6 +12,7 @@ export class CatalogService implements OnModuleInit {
   private readonly logger = new Logger(CatalogService.name);
   private books: Book[] = [];
   private languages: string[] = [];
+  private refreshedAt: string = '';
 
   getCatalogPath(): string {
     return (
@@ -69,6 +70,13 @@ export class CatalogService implements OnModuleInit {
       }
     }
     this.languages = Array.from(langSet).sort();
+
+    try {
+      const stats = fs.statSync(csvPath);
+      this.refreshedAt = stats.mtime.toISOString();
+    } catch {
+      this.refreshedAt = new Date().toISOString();
+    }
 
     this.logger.log(
       `Loaded ${this.books.length} books with ${this.languages.length} unique language values`,
@@ -163,6 +171,13 @@ export class CatalogService implements OnModuleInit {
     const start = (safePage - 1) * safeLimit;
     const data = filtered.slice(start, start + safeLimit);
 
-    return { data, total, page: safePage, limit: safeLimit, totalPages };
+    return {
+      data,
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages,
+      refreshedAt: this.refreshedAt,
+    };
   }
 }

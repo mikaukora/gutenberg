@@ -17,4 +17,5 @@ export interface BooksResponse {
   page: number;
   limit: number;
   totalPages: number;
+  refreshedAt: string;
 }
