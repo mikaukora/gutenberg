@@ -8,6 +8,7 @@ interface Props {
 export function SearchBar({ value, onSearch }: Props) {
   const [input, setInput] = useState(value);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setInput(value);
@@ -38,6 +39,7 @@ export function SearchBar({ value, onSearch }: Props) {
         </svg>
       </span>
       <input
+        ref={inputRef}
         className="search-bar"
         type="text"
         placeholder="Search by title or author"
@@ -45,6 +47,20 @@ export function SearchBar({ value, onSearch }: Props) {
         onChange={(e) => setInput(e.target.value)}
         aria-label="Search by title or author"
       />
+      {input && (
+        <button
+          type="button"
+          className="search-clear"
+          onClick={() => {
+            setInput('');
+            onSearch('');
+            inputRef.current?.focus();
+          }}
+          aria-label="Clear search"
+        >
+          ×
+        </button>
+      )}
     </div>
   );
 }
