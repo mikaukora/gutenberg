@@ -20,10 +20,15 @@ A web application for browsing the [Project Gutenberg](https://www.gutenberg.org
 ### 1. Fetch the catalog data
 
 ```bash
-./fetch_finnish_books.sh
+./fetch_books.sh
 ```
 
-This downloads the full `pg_catalog.csv` from Project Gutenberg (updated weekly) and also extracts Finnish entries into `pg_catalog_fi.csv`.
+This downloads the full `pg_catalog.csv` from Project Gutenberg (updated weekly). To also extract entries for a specific language into `pg_catalog_<code>.csv`, pass the language code:
+
+```bash
+./fetch_books.sh fi    # full catalog + pg_catalog_fi.csv
+./fetch_books.sh en    # full catalog + pg_catalog_en.csv
+```
 
 ### 2. Install dependencies
 
@@ -70,7 +75,7 @@ Open http://localhost:5173 in your browser.
 
 ```
 gutenberg-info/
-  fetch_finnish_books.sh   # Script to download catalog CSV
+  fetch_books.sh           # Script to download catalog CSV (optional: language code for filtered copy)
   backend/                 # NestJS API server
     src/
       catalog/
